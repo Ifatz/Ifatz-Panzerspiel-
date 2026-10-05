@@ -1,273 +1,87 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    touch-action: none;
-}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Panzer Battle 2D">
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #111;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #fff;
-}
+    <title>Panzer Battle 2D</title>
 
-#game-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background: #1a1a1a;
-}
+    <link rel="stylesheet" href="style.css">
 
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 
-.hidden {
-    display: none !important;
-}
+<body>
+    <div id="game-container">
 
-/* Startbildschirm UI */
-#start-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(10, 15, 20, 0.85);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-}
+        <canvas id="gameCanvas"></canvas>
 
-.menu-card {
-    background: #1e293b;
-    border: 2px solid #334155;
-    border-radius: 16px;
-    padding: 30px 40px;
-    width: 90%;
-    max-width: 440px;
-    text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-}
+        <div id="start-screen">
+            <div class="start-panel">
+                <h1>Panzer Battle 2D</h1>
+                <p>Multiplayer Arena</p>
 
-.menu-card h1 {
-    font-size: 2rem;
-    color: #4ade80;
-    letter-spacing: 2px;
-    margin-bottom: 4px;
-}
+                <label for="player-name">Spielername</label>
+                <input
+                    type="text"
+                    id="player-name"
+                    maxlength="12"
+                    value="Kommandant"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
 
-.subtitle {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 24px;
-}
+                <div id="color-picker"></div>
 
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
+                <button id="start-btn" type="button">Spiel starten</button>
+            </div>
+        </div>
 
-.form-group label {
-    display: block;
-    font-size: 0.85rem;
-    color: #cbd5e1;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    font-weight: bold;
-}
+        <div id="hud-overlay" class="hidden">
+            <div id="hud-player-info">
+                <div id="hud-player-name">Kommandant</div>
+                <div id="hud-health-container">
+                    <div id="hud-health-bar"></div>
+                </div>
+            </div>
 
-.form-group input[type="text"] {
-    width: 100%;
-    padding: 12px 16px;
-    background: #0f172a;
-    border: 1px solid #475569;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 1rem;
-    outline: none;
-}
+            <div id="leaderboard">
+                <h2>Rangliste</h2>
+                <ol id="leaderboard-list"></ol>
+            </div>
 
-.color-picker {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
+            <div id="touch-controls">
 
-.color-option {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    cursor: pointer;
-    transition: transform 0.1s, border-color 0.1s;
-}
+                <div id="move-joystick-zone">
+                    <div id="move-joystick-base">
+                        <div id="move-joystick-stick"></div>
+                    </div>
+                </div>
 
-.color-option.selected {
-    border-color: #ffffff;
-    transform: scale(1.15);
-}
+                <div id="aim-joystick-zone">
+                    <div id="aim-joystick-base">
+                        <div id="aim-joystick-stick"></div>
+                    </div>
+                </div>
 
-.btn-primary {
-    width: 100%;
-    padding: 14px;
-    background: #22c55e;
-    color: #000;
-    font-weight: bold;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background 0.2s;
-}
+                <button id="touch-fire-btn" type="button">FEUER</button>
 
-.btn-primary:active {
-    background: #16a34a;
-}
+            </div>
+        </div>
 
-/* In-Game HUD Overlay */
-#hud-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
+    </div>
 
-.hud-top-left {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(15, 23, 42, 0.7);
-    padding: 12px 18px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.player-info #hud-player-name {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.health-bar-bg {
-    width: 160px;
-    height: 14px;
-    background: #334155;
-    border-radius: 7px;
-    overflow: hidden;
-}
-
-.health-bar-fill {
-    width: 100%;
-    height: 100%;
-    background: #22c55e;
-    transition: width 0.15s ease-out;
-}
-
-.hud-top-right {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(15, 23, 42, 0.7);
-    padding: 12px 18px;
-    border-radius: 10px;
-    min-width: 180px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.hud-top-right h3 {
-    font-size: 0.9rem;
-    color: #94a3b8;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
-
-#leaderboard-list {
-    padding-left: 20px;
-    font-size: 0.9rem;
-}
-
-/* Touch-Steuerung iPad */
-#touch-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.joystick-zone {
-    position: absolute;
-    bottom: 30px;
-    width: 180px;
-    height: 180px;
-    pointer-events: auto;
-}
-
-#move-joystick-zone {
-    left: 30px;
-}
-
-#aim-joystick-zone {
-    right: 150px;
-}
-
-.joystick-base {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.joystick-stick {
-    width: 70px;
-    height: 70px;
-    background: rgba(255, 255, 255, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    position: absolute;
-}
-
-.fire-button {
-    position: absolute;
-    bottom: 45px;
-    right: 30px;
-    width: 100px;
-    height: 100px;
-    background: rgba(239, 68, 68, 0.6);
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    color: white;
-    font-weight: bold;
-    font-size: 1.1rem;
-    pointer-events: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-}
-
-.fire-button:active {
-    background: rgba(220, 38, 38, 0.9);
-    transform: scale(0.95);
-}
+    <script src="config.js"></script>
+    <script src="ui.js"></script>
+    <script src="map.js"></script>
+    <script src="weapons.js"></script>
+    <script src="tank.js"></script>
+    <script src="player.js"></script>
+    <script src="multiplayer.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

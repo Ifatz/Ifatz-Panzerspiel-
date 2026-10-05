@@ -1,87 +1,410 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Panzer Battle 2D">
+:root {
+    --bg-dark: #202124;
+    --card-bg: #2d2e31;
+    --card-border: #3c4043;
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --google-blue: #8ab4f8;
+    --google-blue-hover: #aecbfa;
+    --google-green: #81c995;
+    --google-red: #f28b82;
+    --google-yellow: #fde293;
+}
 
-    <title>Panzer Battle 2D</title>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: none;
+}
 
-    <link rel="stylesheet" href="style.css">
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #171717;
+}
 
-<body>
-    <div id="game-container">
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
 
-        <canvas id="gameCanvas"></canvas>
+.hidden {
+    display: none !important;
+}
 
-        <div id="start-screen">
-            <div class="start-panel">
-                <h1>Panzer Battle 2D</h1>
-                <p>Multiplayer Arena</p>
+.overlay-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(32, 33, 36, 0.94);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
 
-                <label for="player-name">Spielername</label>
-                <input
-                    type="text"
-                    id="player-name"
-                    maxlength="12"
-                    value="Kommandant"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
+.google-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+}
 
-                <div id="color-picker"></div>
+.google-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
 
-                <button id="start-btn" type="button">Spiel starten</button>
-            </div>
-        </div>
+.google-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+}
 
-        <div id="hud-overlay" class="hidden">
-            <div id="hud-player-info">
-                <div id="hud-player-name">Kommandant</div>
-                <div id="hud-health-container">
-                    <div id="hud-health-bar"></div>
-                </div>
-            </div>
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
 
-            <div id="leaderboard">
-                <h2>Rangliste</h2>
-                <ol id="leaderboard-list"></ol>
-            </div>
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
 
-            <div id="touch-controls">
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    background: #202124;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    outline: none;
+}
 
-                <div id="move-joystick-zone">
-                    <div id="move-joystick-base">
-                        <div id="move-joystick-stick"></div>
-                    </div>
-                </div>
+.form-group input[type="text"]:focus {
+    border-color: var(--google-blue);
+}
 
-                <div id="aim-joystick-zone">
-                    <div id="aim-joystick-base">
-                        <div id="aim-joystick-stick"></div>
-                    </div>
-                </div>
+.btn-google-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--google-blue);
+    color: #202124;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
 
-                <button id="touch-fire-btn" type="button">FEUER</button>
+.btn-google-primary:active {
+    transform: scale(0.98);
+    background: var(--google-blue-hover);
+}
 
-            </div>
-        </div>
+.btn-google-secondary {
+    padding: 8px 20px;
+    background: rgba(45, 46, 49, 0.9);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+}
 
-    </div>
+/* Panzer Auswahl Layout */
+.select-container {
+    position: relative;
+    width: 92%;
+    max-width: 920px;
+    max-height: 85vh;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
 
-    <script src="config.js"></script>
-    <script src="ui.js"></script>
-    <script src="map.js"></script>
-    <script src="weapons.js"></script>
-    <script src="tank.js"></script>
-    <script src="player.js"></script>
-    <script src="multiplayer.js"></script>
-    <script src="game.js"></script>
-    <script src="main.js"></script>
-</body>
-</html>
+.select-container h2 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.select-layout {
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.tank-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.tank-card {
+    background: #202124;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.tank-card.selected {
+    border-color: var(--google-blue);
+    background: #282a2d;
+    transform: scale(1.02);
+}
+
+.tank-card h4 {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+.tank-details-panel {
+    width: 290px;
+    background: #202124;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.detail-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 8px 0 14px 0;
+}
+
+.stat-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.stat-row span {
+    width: 80px;
+}
+
+.bar-bg {
+    flex: 1;
+    height: 6px;
+    background: #3c4043;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--google-blue);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.trait-box {
+    font-size: 0.8rem;
+    margin-bottom: 14px;
+    padding: 10px;
+    background: #2d2e31;
+    border-radius: 8px;
+}
+
+.trait-label {
+    color: var(--google-yellow);
+    font-weight: bold;
+}
+
+/* Verstecktes Geheim-Element */
+#secret-trigger {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* HUD Overlay */
+#hud-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.hud-top-left {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(45, 46, 49, 0.85);
+    border: 1px solid var(--card-border);
+    padding: 10px 16px;
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+}
+
+#hud-player-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.health-bar-bg {
+    width: 140px;
+    height: 8px;
+    background: #3c4043;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.health-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--google-green);
+    transition: width 0.2s ease-out;
+}
+
+.hud-top-center {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: auto;
+}
+
+.modal-card {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    pointer-events: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.modal-header h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+#leaderboard-list {
+    padding-left: 20px;
+    font-size: 0.85rem;
+}
+
+/* Touch Joysticks */
+#touch-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.joystick-zone {
+    position: absolute;
+    bottom: 30px;
+    width: 150px;
+    height: 150px;
+    pointer-events: auto;
+}
+
+#move-joystick-zone { left: 30px; }
+#aim-joystick-zone { right: 30px; }
+
+.joystick-base {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.joystick-stick {
+    width: 55px;
+    height: 55px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    position: absolute;
+}

@@ -2,7 +2,10 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    >
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Panzer Battle 2D">
@@ -19,12 +22,11 @@
 
         <canvas id="gameCanvas"></canvas>
 
-        <div id="start-screen">
-            <div class="start-panel">
+        <div id="main-menu" class="overlay-screen">
+            <div class="google-card">
                 <h1>Panzer Battle 2D</h1>
                 <p>Multiplayer Arena</p>
 
-                <label for="player-name">Spielername</label>
                 <input
                     type="text"
                     id="player-name"
@@ -32,24 +34,91 @@
                     value="Kommandant"
                     autocomplete="off"
                     spellcheck="false"
+                    placeholder="Spielername"
                 >
 
-                <div id="color-picker"></div>
+                <button id="main-play-btn" type="button">SPIELEN</button>
+            </div>
+        </div>
 
-                <button id="start-btn" type="button">Spiel starten</button>
+        <div id="tank-select-screen" class="overlay-screen hidden">
+            <div class="select-container">
+                <h2>Panzer auswählen</h2>
+
+                <div id="tank-list"></div>
+
+                <div id="tank-details">
+                    <h3 id="detail-name"></h3>
+                    <p id="detail-desc"></p>
+
+                    <div class="tank-stat">
+                        <span>Lebenspunkte</span>
+                        <div class="stat-bar">
+                            <div id="bar-hp"></div>
+                        </div>
+                    </div>
+
+                    <div class="tank-stat">
+                        <span>Geschwindigkeit</span>
+                        <div class="stat-bar">
+                            <div id="bar-speed"></div>
+                        </div>
+                    </div>
+
+                    <div class="tank-stat">
+                        <span>Schaden</span>
+                        <div class="stat-bar">
+                            <div id="bar-damage"></div>
+                        </div>
+                    </div>
+
+                    <div class="tank-stat">
+                        <span>Reichweite</span>
+                        <div class="stat-bar">
+                            <div id="bar-range"></div>
+                        </div>
+                    </div>
+
+                    <div class="tank-stat">
+                        <span>Nachladezeit</span>
+                        <div class="stat-bar">
+                            <div id="bar-reload"></div>
+                        </div>
+                    </div>
+
+                    <div id="detail-trait"></div>
+
+                    <button id="confirm-tank-btn" type="button">
+                        SPIEL BEITRETEN
+                    </button>
+                </div>
+
+                <div id="secret-trigger"></div>
             </div>
         </div>
 
         <div id="hud-overlay" class="hidden">
+
             <div id="hud-player-info">
                 <div id="hud-player-name">Kommandant</div>
+
                 <div id="hud-health-container">
                     <div id="hud-health-bar"></div>
                 </div>
             </div>
 
-            <div id="leaderboard">
-                <h2>Rangliste</h2>
+            <button id="leaderboard-btn" type="button">
+                Rangliste
+            </button>
+
+            <div id="leaderboard-modal" class="modal-card hidden">
+                <div class="modal-header">
+                    <h2>Rangliste</h2>
+                    <button id="close-leaderboard-btn" type="button">
+                        ×
+                    </button>
+                </div>
+
                 <ol id="leaderboard-list"></ol>
             </div>
 
@@ -66,8 +135,6 @@
                         <div id="aim-joystick-stick"></div>
                     </div>
                 </div>
-
-                <button id="touch-fire-btn" type="button">FEUER</button>
 
             </div>
         </div>

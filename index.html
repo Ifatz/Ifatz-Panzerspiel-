@@ -1,67 +1,87 @@
-<canvas id="gameCanvas"></canvas>
-<!-- Startbildschirm Overlay -->
-    <div id="start-screen">
-        <div class="menu-card">
-            <h1>PANZER BATTLE 2D</h1>
-            <p class="subtitle">iPad & Browser Multiplayer</p>
-            
-            <div class="form-group">
-                <label for="player-name">Spielername:</label>
-                <input type="text" id="player-name" maxlength="12" placeholder="Kommandant" value="Kommandant">
-            </div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Panzer Battle 2D">
 
-            <div class="form-group">
-                <label>Panzerfarbe wählen:</label>
-                <div id="color-picker" class="color-picker"></div>
-            </div>
+    <title>Panzer Battle 2D</title>
 
-            <button id="start-btn" class="btn-primary">SPIEL STARTEN</button>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div id="game-container">
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen">
+            <div class="start-panel">
+                <h1>Panzer Battle 2D</h1>
+                <p>Multiplayer Arena</p>
+
+                <label for="player-name">Spielername</label>
+                <input
+                    type="text"
+                    id="player-name"
+                    maxlength="12"
+                    value="Kommandant"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+
+                <div id="color-picker"></div>
+
+                <button id="start-btn" type="button">Spiel starten</button>
+            </div>
         </div>
+
+        <div id="hud-overlay" class="hidden">
+            <div id="hud-player-info">
+                <div id="hud-player-name">Kommandant</div>
+                <div id="hud-health-container">
+                    <div id="hud-health-bar"></div>
+                </div>
+            </div>
+
+            <div id="leaderboard">
+                <h2>Rangliste</h2>
+                <ol id="leaderboard-list"></ol>
+            </div>
+
+            <div id="touch-controls">
+
+                <div id="move-joystick-zone">
+                    <div id="move-joystick-base">
+                        <div id="move-joystick-stick"></div>
+                    </div>
+                </div>
+
+                <div id="aim-joystick-zone">
+                    <div id="aim-joystick-base">
+                        <div id="aim-joystick-stick"></div>
+                    </div>
+                </div>
+
+                <button id="touch-fire-btn" type="button">FEUER</button>
+
+            </div>
+        </div>
+
     </div>
 
-    <!-- In-Game HUD -->
-    <div id="hud-overlay" class="hidden">
-        <div class="hud-top-left">
-            <div class="player-info">
-                <span id="hud-player-name">Kommandant</span>
-                <div class="health-bar-bg">
-                    <div id="hud-health-bar" class="health-bar-fill"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Leaderboard -->
-        <div id="leaderboard" class="hud-top-right">
-            <h3>Rangliste</h3>
-            <ol id="leaderboard-list"></ol>
-        </div>
-
-        <!-- Touch Controls für iPad (Querformat) -->
-        <div id="touch-controls">
-            <div id="move-joystick-zone" class="joystick-zone">
-                <div id="move-joystick-base" class="joystick-base">
-                    <div id="move-joystick-stick" class="joystick-stick"></div>
-                </div>
-            </div>
-
-            <div id="aim-joystick-zone" class="joystick-zone">
-                <div id="aim-joystick-base" class="joystick-base">
-                    <div id="aim-joystick-stick" class="joystick-stick"></div>
-                </div>
-            </div>
-
-            <button id="touch-fire-btn" class="fire-button">FEUER</button>
-        </div>
-    </div>
-</div>
-
-<!-- Skripte in korrekter Abhängigkeitsreihenfolge -->
-<script src="config.js"></script>
-<script src="ui.js"></script>
-<script src="map.js"></script>
-<script src="weapons.js"></script>
-<script src="tank.js"></script>
-<script src="player.js"></script>
-<script src="multiplayer.js"></script>
-<script src="game.js"></script>
-<script src="main.js"></script>
+    <script src="config.js"></script>
+    <script src="ui.js"></script>
+    <script src="map.js"></script>
+    <script src="weapons.js"></script>
+    <script src="tank.js"></script>
+    <script src="player.js"></script>
+    <script src="multiplayer.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
